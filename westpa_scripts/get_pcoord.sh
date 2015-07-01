@@ -43,7 +43,6 @@ if [ ${G_DIST} ]; then
 
     # Return the true pcoord.
     paste $DIST_OUT $RMSD_OUT > $WEST_PCOORD_RETURN || exit 1
-    paste $DIST_OUT $RMSD_OUT > out_$$ || exit 1
 
     rm -f $DIST $DIST_OUT $RMSD $RMSD_OUT
 
