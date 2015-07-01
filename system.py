@@ -3,6 +3,7 @@ import os, sys, math, itertools
 import numpy
 import west
 from west import WESTSystem
+import westpa
 from westpa.binning import RectilinearBinMapper
 
 import logging

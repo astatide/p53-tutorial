@@ -24,7 +24,7 @@ if [ ${G_DIST} ]; then
     # Currently, GROMACS 5 isn't supported.
 
     # Generate a .tpr file for use in g_dist and g_rms
-    $GROMPP -f md.mdp -c $WEST_STRUCT_DATA_REF.gro -p $TOP \
+    $GROMPP -f $MDP_LOC -c $WEST_STRUCT_DATA_REF.gro -p $TOP \
           -t $WEST_STRUCT_DATA_REF.trr -o $WEST_STRUCT_DATA_REF.tpr -po md_out.mdp -n $NDX
     rm md_out.mdp
 
@@ -43,10 +43,9 @@ if [ ${G_DIST} ]; then
     # Return the true pcoord.
     paste $DIST_OUT $RMSD_OUT > $WEST_PCOORD_RETURN || exit 
 
-    # Remove the imaged trajectories we created that we don't need, anymore, as these are not likely to
-    # be caught in the cleanup step (we don't want to copy them off scratch), as well as the reference file.
-
     rm -f $DIST $DIST_OUT $RMSD $RMSD_OUT
+
+fi
 
 if [ -n "$SEG_DEBUG" ] ; then
     head -v $WEST_PCOORD_RETURN

@@ -54,7 +54,8 @@ case $WEST_CURRENT_SEG_INITPOINT_TYPE in
         $STAGEIN $TOP_LOC .
         $STAGEIN $NDX_LOC .
         $STAGEIN $REF_LOC .
-        $GROMPP -f md.mdp -c parent.gro -e parent.edr -p $TOP \
+        $STAGEIN $MDP_LOC .
+        $GROMPP -f $MDP -c parent.gro -e parent.edr -p $TOP \
           -t parent.trr -o seg.tpr -po md_out.mdp
     ;;
 
@@ -75,7 +76,8 @@ case $WEST_CURRENT_SEG_INITPOINT_TYPE in
         $STAGEIN $TOP_LOC .
         $STAGEIN $NDX_LOC .
         $STAGEIN $REF_LOC .
-        $GROMPP -f md.mdp -c parent.gro -e parent.edr -p $TOP \
+        $STAGEIN $MDP_LOC .
+        $GROMPP -f $MDP -c parent.gro -e parent.edr -p $TOP \
           -t parent.trr -o seg.tpr -po md_out.mdp
     ;;
 
