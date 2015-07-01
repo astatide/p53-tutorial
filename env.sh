@@ -14,7 +14,7 @@ case $HOSTNAME in
         module purge
         module load sys
         module load queue
-        module load gromacs/4.6.3-intel13-sse41
+        module load gromacs/4.6.5-intel-2013-rhel
         module load westpa/1.0-gcc-4.8.2
 
         # Should we use the local scratch?
