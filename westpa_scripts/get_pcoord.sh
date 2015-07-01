@@ -24,20 +24,20 @@ if [ ${G_DIST} ]; then
     # Currently, GROMACS 5 isn't supported.
 
     # Generate a .tpr file for use in g_dist and g_rms
-    $GROMPP -f $MDP_LOC -c $WEST_STRUCT_DATA_REF.gro -p $TOP \
-          -t $WEST_STRUCT_DATA_REF.trr -o $WEST_STRUCT_DATA_REF.tpr -po md_out.mdp -n $NDX
+    $GROMPP -f $MDP_LOC -c $WEST_STRUCT_DATA_REF.gro -p $TOP_LOC \
+          -t $WEST_STRUCT_DATA_REF.trr -o $WEST_STRUCT_DATA_REF.tpr -po md_out.mdp -n $NDX_LOC
     rm md_out.mdp
 
     # Update the command, then calculate the first dimension of the progress coordinate: end to end distance.
     COMMAND="18 \n 19 \n"
     echo -e $COMMAND \
-      | $G_DIST -f $WEST_STRUCT_DATA_REF.gro -s $WEST_STRUCT_DATA_REF.tpr -o $DIST -xvg none -n $NDX || exit 1
+      | $G_DIST -f $WEST_STRUCT_DATA_REF.gro -s $WEST_STRUCT_DATA_REF.tpr -o $DIST -xvg none -n $NDX_LOC || exit 1
     cat $DIST | awk '{print $2*10;}' > $DIST_OUT
 
     # Update the command again, then run g_rms to calculate to second the dimension: the heavy atom rmsd of the protein aligned on itself.
     COMMAND="2 \n 2 \n"
     echo -e $COMMAND \
-      | $G_RMS -s $REF_LOC -f $WEST_STRUCT_DATA_REF.gro -n $NDX -xvg none || exit 1
+      | $G_RMS -s $REF_LOC -f $WEST_STRUCT_DATA_REF.gro -n $NDX_LOC -xvg none || exit 1
     cat $RMSD_OUT | awk '{print $2*10;}' > $RMSD_OUT
 
     # Return the true pcoord.
