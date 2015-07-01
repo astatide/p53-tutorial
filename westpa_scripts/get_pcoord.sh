@@ -31,7 +31,7 @@ if [ ${G_DIST} ]; then
     # Update the command, then calculate the first dimension of the progress coordinate: end to end distance.
     COMMAND="18 \n 19 \n"
     echo -e $COMMAND \
-      | $G_DIST -f $WEST_STRUCT_DATA_REF.gro -s $WEST_STRUCT_DATA_REF.tpr -o $DIST -xvg none -ndx $NDX || exit 1
+      | $G_DIST -f $WEST_STRUCT_DATA_REF.gro -s $WEST_STRUCT_DATA_REF.tpr -o $DIST -xvg none -n $NDX || exit 1
     cat $DIST | awk '{print $2*10;}' > $DIST_OUT
 
     # Update the command again, then run g_rms to calculate to second the dimension: the heavy atom rmsd of the protein aligned on itself.
