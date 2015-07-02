@@ -138,7 +138,8 @@ def coord_loader(fieldname, coord_filename, segment, single_point=False):
                            (should always be false)
     """
     # Load coordinates
-    n_frames = 6
+    system = westpa.rc.get_system_driver()
+    n_frames = system.pcoord_len
     n_atoms  = 2
     coord    = numpy.loadtxt(coord_filename, dtype = numpy.float32)
     coord    = numpy.reshape(coord, (n_frames, n_atoms, 3))
@@ -161,8 +162,9 @@ def log_loader(fieldname, log_filename, segment, single_point=False):
     with open(log_filename, 'r') as log_file:
         raw_text = [line.strip() for line in log_file.readlines()]
 
-    # Determine number of fields
-    n_frames = 6
+    # Determine number of fields.
+    system = westpa.rc.get_system_driver()
+    n_frames = system.pcoord_len
     n_fields = 0
     line_i   = 0
     starts   = []
