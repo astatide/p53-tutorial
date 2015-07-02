@@ -51,11 +51,11 @@ class System(WESTSystem):
                                         numpy.int)
         self.bin_target_counts[...] = 4
 
-def _2D_pcoord_loader_color_tracker(fieldname, coord_file, segment, single_point=False):
+def pcoord_loader_color_tracker(fieldname, coord_file, segment, single_point=False):
     """
-    This function loads a 2-dimensional progress coordinate, performs some logic to track color,
-    then returns the 2+1 dimensional progress coordinate to the system to be processed.
-    In this tutorial, there are 3 dimensions specified in this file; runseg.sh returns two of them.
+    This function loads a 1-dimensional progress coordinate, performs some logic to track color,
+    then returns the 2 dimensional progress coordinate to the system to be processed.
+    In this tutorial, there are 2 dimensions specified in this file; runseg.sh returns one of them.
     The third is calculated here.
     Note that we are defining our states only based on one progress coordinate dimension, in this example.
 
@@ -83,8 +83,10 @@ def _2D_pcoord_loader_color_tracker(fieldname, coord_file, segment, single_point
     else:
         npts = system.pcoord_len
 
-    coords = numpy.empty((npts,2), numpy.float32)
+    coords = numpy.empty((npts), numpy.float32)
     colors = numpy.empty((npts), numpy.float32)
+    #coords = numpy.empty((npts,system.pcoord_ndim), numpy.float32)
+    #colors = numpy.empty((npts), numpy.float32)
     if single_point == True:
         colors[:] = unknown_state
         for istate,state_tuple in enumerate(color_bins):
@@ -93,27 +95,36 @@ def _2D_pcoord_loader_color_tracker(fieldname, coord_file, segment, single_point
             # to true.
             # We evalulate whether or not we're in a state; if not, we leave it as in the
             # unknown state.
-            if coord_raw[0] >= state_tuple[0] and coord_raw[0] < state_tuple[1]:
+            # Swap this line to enable an N-dimensional pcoord, using the 1st dimension
+            # as the state definition.
+            #if coord_raw[0] >= state_tuple[0] and coord_raw[0] < state_tuple[1]:
+            if coord_raw >= state_tuple[0] and coord_raw < state_tuple[1]:
                 colors[:] = istate
         coords[:] = coord_raw[...]
     else:
         # If we're not the first point, we set the state to be what it was in the beginning
         # of the iteration.  We only want to update the state when we update a bin for purposes
         # of state tracking.
-        colors[:] = segment.pcoord[0][2]
+        # Swap lines to enable multiple pcoord dimensions, then change dimensions.
+        #colors[:] = segment.pcoord[0][2]
+        colors[:] = segment.pcoord[0][1]
         coords[:] = coord_raw[...]
 
     for istate,state_tuple in enumerate(color_bins):
-        if coords[-1,0] >= state_tuple[0] and coords[-1,0] < state_tuple[1]:
+        #if coords[-1,0] >= state_tuple[0] and coords[-1,0] < state_tuple[1]:
+        if coords[-1] >= state_tuple[0] and coords[-1] < state_tuple[1]:
             colors[-1] = istate
     
     # We require different stacking behavior to return things in the proper order
     # depending on how many points we have.  I could probably clean this up.
     if single_point == True:
-        segment.pcoord = numpy.hstack((coords[0,0],coords[0,1],colors[:]))
+        # Again, swap lines.
+        #segment.pcoord = numpy.hstack((coords[0,0],coords[0,1],colors[:]))
+        segment.pcoord = numpy.hstack((coords[:],colors[:]))
     else:
         # This could easily be modified to return N dimensions.
-        segment.pcoord = numpy.swapaxes(numpy.vstack((coords[:,0],coords[:,1],colors[:])), 0, 1)
+        #segment.pcoord = numpy.swapaxes(numpy.vstack((coords[:,0],coords[:,1],colors[:])), 0, 1)
+        segment.pcoord = numpy.swapaxes(numpy.vstack((coords[:],colors[:])), 0, 1)
 
 def coord_loader(fieldname, coord_filename, segment, single_point=False):
     """

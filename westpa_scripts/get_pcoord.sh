@@ -39,10 +39,11 @@ if [ ${G_DIST} ]; then
     COMMAND="2 \n 2 \n"
     echo -e $COMMAND \
       | $G_RMS -s $REF_LOC -f $WEST_STRUCT_DATA_REF.gro -n $NDX_LOC -xvg none -o $RMSD || exit 1
-    cat $RMSD | awk '{print $2*10;}' > $RMSD_OUT
+    cat $RMSD | awk '{print $2*10;}' > $WEST_PCOORD_RETURN
 
     # Return the true pcoord.
-    paste $DIST_OUT $RMSD_OUT > $WEST_PCOORD_RETURN || exit 1
+    #paste $DIST_OUT $RMSD_OUT > $WEST_PCOORD_RETURN || exit 1
+    #cat $RMSD_OUT > $WEST_PCOORD_RETURN || exit 1
 
     rm -f $DIST $DIST_OUT $RMSD $RMSD_OUT
 

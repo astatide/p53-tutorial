@@ -117,16 +117,16 @@ if [ ${G_DIST} ]; then
     COMMAND="18 \n 19 \n"
     echo -e $COMMAND \
       | $G_DIST -f seg.xtc -s seg.tpr -o dist.xvg -xvg none -n $NDX || exit 1
-    cat dist.xvg | awk '{print $2*10;}' > dist_out.xvg
+    cat dist.xvg | awk '{print $2*10;}' > $WEST_END_TO_END_DIST_RETURN
 
     # Update the command again, then run g_rms to calculate to second the dimension: the heavy atom rmsd of the protein aligned on itself.
     COMMAND="2 \n 2 \n"
     echo -e $COMMAND \
       | $G_RMS -s $REF -f nojump.xtc -n $NDX -xvg none || exit 1
-    cat rmsd.xvg | awk '{print $2*10;}' > rmsd_out.xvg
+    cat rmsd.xvg | awk '{print $2*10;}' > $WEST_PCOORD_RETURN
 
     # Return the true pcoord.
-    paste dist_out.xvg rmsd_out.xvg > $WEST_PCOORD_RETURN || exit 
+    #paste dist_out.xvg rmsd_out.xvg > $WEST_PCOORD_RETURN || exit 
 
     # Remove the imaged trajectories we created that we don't need, anymore, as these are not likely to
     # be caught in the cleanup step (we don't want to copy them off scratch), as well as the reference file.
