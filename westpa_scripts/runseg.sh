@@ -25,12 +25,12 @@ fi
 function cleanup() {
     # Clean up.  Copy back what we want, and remove the rest.
     if [[ "$USE_LOCAL_SCRATCH" == "1" ]] ; then
-        $SWROOT/bin/cp *.{xtc,trr,edr,tpr,gro,log,xvg} $WEST_CURRENT_SEG_DATA_REF || (sleep 10 && $SWROOT/bin/cp *.{xtc,trr,edr,tpr,gro,log} $WEST_CURRENT_SEG_DATA_REF) || exit 1
+        $SWROOT/bin/cp *.{cpt,xtc,trr,edr,tpr,gro,log,xvg} $WEST_CURRENT_SEG_DATA_REF || (sleep 10 && $SWROOT/bin/cp *.{xtc,trr,edr,tpr,gro,log} $WEST_CURRENT_SEG_DATA_REF) || exit 1
         cd $WEST_CURRENT_SEG_DATA_REF
         $SWROOT/bin/rm -Rf $WORKDIR
     else
         # Here, we're not using local scratch.  Remove some specific things, in that case.
-        $SWROOT/bin/rm -f *.itp *.mdp *.ndx *.top state.cpt
+        $SWROOT/bin/rm -f *.itp *.mdp *.ndx *.top
     fi
 }
 
@@ -45,20 +45,26 @@ case $WEST_CURRENT_SEG_INITPOINT_TYPE in
     SEG_INITPOINT_CONTINUES)
         # A continuation from a prior segment
         # $WEST_PARENT_DATA_REF contains the reference to the
+        # We'll use the checkpoint files, rather than energy files,
+        # in this case.
         #   parent segment
         sed "s/RAND/$WEST_RAND16/g" \
           $WEST_SIM_ROOT/gromacs_config/md.mdp > md.mdp
-        $STAGEIN $WEST_PARENT_DATA_REF/seg.edr ./parent.edr
+        #$STAGEIN $WEST_PARENT_DATA_REF/seg.edr ./parent.edr
         $STAGEIN $WEST_PARENT_DATA_REF/seg.gro ./parent.gro
-        $STAGEIN $WEST_PARENT_DATA_REF/seg.trr ./parent.trr
+        #$STAGEIN $WEST_PARENT_DATA_REF/seg.trr ./parent.trr
+        $STAGEIN $WEST_PARENT_DATA_REF/seg.cpt ./parent.cpt
+        $STAGEIN $WEST_PARENT_DATA_REF/imaged_ref.gro ./parent_imaged.gro
         $STAGEIN $TOP_LOC .
         $STAGEIN $NDX_LOC .
         $STAGEIN $REF_LOC .
         $STAGEIN $MDP_LOC .
         $STAGEIN $ITP_LOC .
         $STAGEIN $ION_LOC . || exit 1
-        $GROMPP -f $MDP -c parent.gro -e parent.edr -p $TOP \
-          -t parent.trr -o seg.tpr -po md_out.mdp
+        #$GROMPP -f $MDP -c parent.gro -e parent.edr -p $TOP \
+        #  -t parent.trr -o seg.tpr -po md_out.mdp -t parent.cpt
+        $GROMPP -f $MDP -c parent.gro -t parent.cpt -p $TOP \
+          -o seg.tpr -po md_out.mdp
     ;;
 
     SEG_INITPOINT_NEWTRAJ)
@@ -67,6 +73,7 @@ case $WEST_CURRENT_SEG_INITPOINT_TYPE in
         # and an old one, except we handle our istates a little differently
         # than a previous segment.  For an explicit solvent simulation,
         # all trajectories are considered continuations.
+        # We are also copying in the basis state as the imaged ref.
         # $WEST_PARENT_DATA_REF contains the reference to the
         #   appropriate basis or initial state
         sed "s/RAND/$WEST_RAND16/g" \
@@ -74,7 +81,7 @@ case $WEST_CURRENT_SEG_INITPOINT_TYPE in
         $STAGEIN $WEST_PARENT_DATA_REF.edr ./parent.edr
         $STAGEIN $WEST_PARENT_DATA_REF.gro ./parent.gro
         $STAGEIN $WEST_PARENT_DATA_REF.trr ./parent.trr
-        $STAGEIN $WEST_SIM_ROOT/gromacs_config/p53.top .
+        $STAGEIN $WEST_PARENT_DATA_REF.gro ./parent_imaged.gro
         $STAGEIN $TOP_LOC .
         $STAGEIN $NDX_LOC .
         $STAGEIN $REF_LOC .
@@ -94,7 +101,7 @@ esac
 
 # Propagate segment
 $MDRUN -s   seg.tpr -o seg.trr -c  seg.gro -e seg.edr \
-       -cpo seg.cpt -g seg.log -nt 1
+       -cpo seg.cpt -g seg.log -x  seg.xtc -nt 1
 
 # Calculate progress coordinate
 # First, we must ensure the protein is correctly imaged.  Essentially, this requires
@@ -109,7 +116,7 @@ if [ ${G_DIST} ]; then
     # Image the system correctly.
     COMMAND="0 \n"
     echo -e $COMMAND \
-      | $TRJCONV    -f seg.trr     -s parent_imaged.gro  -n $NDX -o none.xtc        -pbc none || exit 1
+      | $TRJCONV    -f seg.xtc     -s parent_imaged.gro  -n $NDX -o none.xtc        -pbc none || exit 1
     echo -e $COMMAND \
       | $TRJCONV    -f none.xtc    -s parent_imaged.gro  -n $NDX -o whole.xtc       -pbc whole || exit 1
     echo -e $COMMAND \
@@ -120,7 +127,7 @@ if [ ${G_DIST} ]; then
     # Update the command, then calculate the first dimension of the progress coordinate: end to end distance.
     COMMAND="18 \n 19 \n"
     echo -e $COMMAND \
-      | $G_DIST -f $WEST_CURRENT_SEG_DATA_REF/seg.trr -s seg.tpr -o dist.xvg -xvg none -n $NDX || exit 1
+      | $G_DIST -f seg.xtc -s seg.tpr -o dist.xvg -xvg none -n $NDX || exit 1
     cat dist.xvg | awk '{print $2*10;}' > dist_out.xvg
 
     # Update the command again, then run g_rms to calculate to second the dimension: the heavy atom rmsd of the protein aligned on itself.

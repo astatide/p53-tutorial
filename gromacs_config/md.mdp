@@ -4,8 +4,8 @@
 integrator              = md                                ; Langevin dynamics
 ld_seed                 = -1                                ; Random seed
 dt                      = 0.002                             ; Timestep (ps)
-nsteps                  = 7500                              ; Simulation duration (timesteps)
-nstcomm                 = 500                               ; Center of mass motion removal interval (timesteps)
+nsteps                  = 100                               ; Simulation duration (timesteps)
+nstcomm                 = 5                                 ; Center of mass motion removal interval (timesteps)
 comm-grps               = system                            ; Remove center of mass motion of system
 define                  = -DPOSRES
 ;###################################################### ENSEMBLE #######################################################
@@ -40,11 +40,11 @@ ns_type                 = grid                              ; Update neighbor li
 nstlist                 = 10                                ; Neighbor list update interval (timesteps)
 rlist                   = 1.00                              ; Neighbor list cut-off (nm)
 ;####################################################### OUTPUT ########################################################
-nstlog                  = 500                               ; Energy log output interval (timesteps)
-nstenergy               = 500                               ; Energy output interval (timesteps)
-nstxout                 = 7500                              ; Full-resolution trajectory output interval (timesteps)
-nstvout                 = 7500                              ; Full-resolution velocity output interval (timesteps)
-nstfout                 = 7500                              ; Full-resolution force output interval (timesteps)
-nstxtcout               = 750                               ; Reduced-resolution trajectory output interval (timesteps)
+nstlog                  = 100                               ; Energy log output interval (timesteps)
+nstenergy               = 1                                 ; Energy output interval (timesteps)
+nstxout                 = 100                               ; Full-resolution trajectory output interval (timesteps)
+nstvout                 = 100                               ; Full-resolution velocity output interval (timesteps)
+nstfout                 = 100                               ; Full-resolution force output interval (timesteps)
+nstxtcout               = 10                                ; Reduced-resolution trajectory output interval (timesteps)
 xtc-precision           = 10000                             ; Reduced-resolution trajectory output precision
 
