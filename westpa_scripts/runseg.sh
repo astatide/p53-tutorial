@@ -24,8 +24,10 @@ fi
 
 function cleanup() {
     # Clean up.  Copy back what we want, and remove the rest.
+    # Also, remove our copied in parent references.  We don't need to keep that.
+    $SWROOT/bin/rm -f none.xtc whole.xtc $REF parent.*
     if [[ "$USE_LOCAL_SCRATCH" == "1" ]] ; then
-        $SWROOT/bin/cp *.{cpt,xtc,trr,edr,tpr,gro,log,xvg} $WEST_CURRENT_SEG_DATA_REF || (sleep 10 && $SWROOT/bin/cp *.{xtc,trr,edr,tpr,gro,log} $WEST_CURRENT_SEG_DATA_REF) || exit 1
+        $SWROOT/bin/cp *.{cpt,xtc,trr,edr,tpr,gro,log,xvg} $WEST_CURRENT_SEG_DATA_REF || exit 1
         cd $WEST_CURRENT_SEG_DATA_REF
         $SWROOT/bin/rm -Rf $WORKDIR
     else
@@ -50,19 +52,10 @@ case $WEST_CURRENT_SEG_INITPOINT_TYPE in
         #   parent segment
         sed "s/RAND/$WEST_RAND16/g" \
           $WEST_SIM_ROOT/gromacs_config/md.mdp > md.mdp
-        #$STAGEIN $WEST_PARENT_DATA_REF/seg.edr ./parent.edr
         $STAGEIN $WEST_PARENT_DATA_REF/seg.gro ./parent.gro
-        #$STAGEIN $WEST_PARENT_DATA_REF/seg.trr ./parent.trr
         $STAGEIN $WEST_PARENT_DATA_REF/seg.cpt ./parent.cpt
         $STAGEIN $WEST_PARENT_DATA_REF/imaged_ref.gro ./parent_imaged.gro
-        $STAGEIN $TOP_LOC .
-        $STAGEIN $NDX_LOC .
-        $STAGEIN $REF_LOC .
-        $STAGEIN $MDP_LOC .
-        $STAGEIN $ITP_LOC .
-        $STAGEIN $ION_LOC . || exit 1
-        #$GROMPP -f $MDP -c parent.gro -e parent.edr -p $TOP \
-        #  -t parent.trr -o seg.tpr -po md_out.mdp -t parent.cpt
+        $STAGEIN $GMX_CFG/* . || exit 1
         $GROMPP -f $MDP -c parent.gro -t parent.cpt -p $TOP \
           -o seg.tpr -po md_out.mdp
     ;;
@@ -71,7 +64,8 @@ case $WEST_CURRENT_SEG_INITPOINT_TYPE in
         # Initiation of a new trajectory
         # In truth, there's very little difference between a new trajectory
         # and an old one, except we handle our istates a little differently
-        # than a previous segment.  For an explicit solvent simulation,
+        # than a previous segment, and use the .edr file.  
+        # For an explicit solvent simulation,
         # all trajectories are considered continuations.
         # We are also copying in the basis state as the imaged ref.
         # $WEST_PARENT_DATA_REF contains the reference to the
@@ -82,12 +76,7 @@ case $WEST_CURRENT_SEG_INITPOINT_TYPE in
         $STAGEIN $WEST_PARENT_DATA_REF.gro ./parent.gro
         $STAGEIN $WEST_PARENT_DATA_REF.trr ./parent.trr
         $STAGEIN $WEST_PARENT_DATA_REF.gro ./parent_imaged.gro
-        $STAGEIN $TOP_LOC .
-        $STAGEIN $NDX_LOC .
-        $STAGEIN $REF_LOC .
-        $STAGEIN $MDP_LOC .
-        $STAGEIN $ITP_LOC .
-        $STAGEIN $ION_LOC . || exit 1
+        $STAGEIN $GMX_CFG/* .
         $GROMPP -f $MDP -c parent.gro -e parent.edr -p $TOP \
           -t parent.trr -o seg.tpr -po md_out.mdp
     ;;
@@ -141,25 +130,25 @@ if [ ${G_DIST} ]; then
 
     # Remove the imaged trajectories we created that we don't need, anymore, as these are not likely to
     # be caught in the cleanup step (we don't want to copy them off scratch), as well as the reference file.
-    $SWROOT/bin/rm -f none.xtc whole.xtc $REF
 fi
 
 # Output coordinates.  While we can return coordinates, this is expensive (data size) for a system of this size
 # and so by default, it is off for this system.  However, by modifying the variable COMMAND, the group
 # which has its coordinates returned can be modified and reduce the cost, so it is sensible to leave it in.
+
 if [ ${WEST_COORD_RETURN} ]; then
     COMMAND="0 \n"
     if [ ${TRJCONV} ]; then
         # For GROMACS 4, use trjconv
         echo -e $COMMAND | $TRJCONV -f seg.trr -s seg.tpr -o seg.pdb
     fi
-    cat $WEST_CURRENT_SEG_DATA_REF/seg.pdb | grep 'ATOM' \
+    cat seg.pdb | grep 'ATOM' \
       | awk '{print $6, $7, $8}' > $WEST_COORD_RETURN
 fi
 
 # Output log
 if [ ${WEST_LOG_RETURN} ]; then
-    cat $WEST_CURRENT_SEG_DATA_REF/seg.log \
+    cat seg.log \
       | awk '/Started mdrun/ {p=1}; p; /A V E R A G E S/ {p=0}' \
       > $WEST_LOG_RETURN
 fi

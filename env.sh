@@ -52,6 +52,7 @@ export ION_LOC=$WEST_SIM_ROOT/gromacs_config/ions.itp
 export NDX_LOC=$WEST_SIM_ROOT/gromacs_config/p53.ndx
 export REF_LOC=$WEST_SIM_ROOT/gromacs_config/coil.gro
 export MDP_LOC=$WEST_SIM_ROOT/gromacs_config/md.mdp
+export GMX_CFG=$WEST_SIM_ROOT/gromacs_config/
 export TOP=p53.top
 export NDX=p53.ndx
 export REF=coil.gro

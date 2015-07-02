@@ -19,13 +19,33 @@ class System(WESTSystem):
         """
         Initializes system
         """
-        self.pcoord_ndim  = 3
+        self.pcoord_ndim  = 2
         self.pcoord_len   = 11
         self.pcoord_dtype = numpy.float32
-        binbounds         = [ 0.00, 2.80, 2.88, 3.00, 3.10, 3.29, 3.79, 3.94,
-                              4.12, 4.39, 5.43, 5.90, 6.90, 7.90, 8.90, 9.90,
-                             10.90,11.90,12.90,13.90,14.90,15.90,float('inf')]
-        self.bin_mapper   = RectilinearBinMapper([binbounds])
+        # As the RMSD coordinate is taken relative to the coil, aligned on the coil,
+        # it will remain sensitive to coil changes.  It's best to assume the maximum is
+        # not dissimilar to the maximum for the distance; something around 57 A, as
+        # that would take into account the peptide flipping completely around.
+        # However, we must bin much finer.
+        self.rmsd_binbounds         = [0.0+0.4*i for i in xrange(0,19)] + \
+                                      [8.0+0.8*i for i in xrange(0,19)] + \
+                                      [24.0+11.0*i for i in xrange(0,3)] + [float('inf')]
+        # As this is the end to end length of the P53 peptide, the bins should cover
+        # everything from the coil to the fully extended peptide, or 3.8 A * 15 or so.
+        # (Including caps probably overestimates length, but that's alright)
+        # Total of 57 angstroms.
+        #self.dist_binbounds         = [0.0+10.0*i for i in xrange(0,6)] + [float('inf')]
+
+        # It's best not to place these at the integer boundaries, due to 
+        # oddities with the way numpy/h5py stores the values inside the west.h5 file.
+        # Given that we are starting in the coil conformation, the 'unknown state'
+        # (that is, 1.5 to float, or 2) will never be used; our bins will never be more
+        # than 66% filled.
+
+        self.color_binbounds = [-0.5,0.5,1.5,float('inf')]
+
+        # A simple rectilinear binmapper, with the third dimension as color, to ensure good sampling.
+        self.bin_mapper   = RectilinearBinMapper([self.rmsd_binbounds, self.color_binbounds])
 
         self.bin_target_counts      = numpy.empty((self.bin_mapper.nbins,),
                                         numpy.int)
@@ -51,6 +71,9 @@ def _2D_pcoord_loader_color_tracker(fieldname, coord_file, segment, single_point
     coord_raw = numpy.loadtxt(coord_file, dtype=numpy.float32) 
     # These are the states; they are left inclusive, and right exclusive, which is consistent with the normal
     # binning procedure.
+    # It's difficult to ascertain what is truly 'folded' and 'unfolded' for these without a prior
+    # free energy profile; thankfully, we just need some rough estimates.  In the worst case scenario,
+    # we devolve to the original Huber and Kim sampling scheme.
     color_bins = [(0.0,0.20),(11.60,float('inf'))]
     unknown_state = 2
     system = westpa.rc.get_system_driver()
