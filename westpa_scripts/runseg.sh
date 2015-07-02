@@ -89,6 +89,8 @@ case $WEST_CURRENT_SEG_INITPOINT_TYPE in
 esac
 
 # Propagate segment
+# It's easiest to set our OpenMP thread count manually here.
+export OMP_NUM_THREADS=1
 $MDRUN -s   seg.tpr -o seg.trr -c  seg.gro -e seg.edr \
        -cpo seg.cpt -g seg.log -x  seg.xtc -nt 1
 
