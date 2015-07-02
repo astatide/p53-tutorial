@@ -5,7 +5,7 @@ integrator              = md                                ; Langevin dynamics
 ld_seed                 = -1                                ; Random seed
 dt                      = 0.002                             ; Timestep (ps)
 nsteps                  = 7500                              ; Simulation duration (timesteps)
-nstcomm                 = 750                               ; Center of mass motion removal interval (timesteps)
+nstcomm                 = 375                               ; Center of mass motion removal interval (timesteps)
 comm-grps               = system                            ; Remove center of mass motion of system
 define                  = -DPOSRES
 ;###################################################### ENSEMBLE #######################################################
