@@ -20,7 +20,7 @@ class System(WESTSystem):
         Initializes system
         """
         self.pcoord_ndim  = 3
-        self.pcoord_len   = 6
+        self.pcoord_len   = 11
         self.pcoord_dtype = numpy.float32
         binbounds         = [ 0.00, 2.80, 2.88, 3.00, 3.10, 3.29, 3.79, 3.94,
                               4.12, 4.39, 5.43, 5.90, 6.90, 7.90, 8.90, 9.90,

@@ -1,10 +1,10 @@
-;   1 ns NPT production with Velocity Rescaling thermostat and Berendsen barostat
-;   Template Written by Karl Debiec on 13-03-14
+;   15 ps NPT production with Velocity Rescaling thermostat and Berendsen barostat
+;   Template Written by Karl Debiec on 13-03-14, modified by Adam Pratt on 01-17-15
 ;##################################################### INTEGRATOR ######################################################
 integrator              = md                                ; Langevin dynamics
 ld_seed                 = -1                                ; Random seed
 dt                      = 0.002                             ; Timestep (ps)
-nsteps                  = 500000                            ; Simulation duration (timesteps)
+nsteps                  = 7500                              ; Simulation duration (timesteps)
 nstcomm                 = 500                               ; Center of mass motion removal interval (timesteps)
 comm-grps               = system                            ; Remove center of mass motion of system
 define                  = -DPOSRES
@@ -42,9 +42,9 @@ rlist                   = 1.00                              ; Neighbor list cut-
 ;####################################################### OUTPUT ########################################################
 nstlog                  = 500                               ; Energy log output interval (timesteps)
 nstenergy               = 500                               ; Energy output interval (timesteps)
-nstxout                 = 500000                            ; Full-resolution trajectory output interval (timesteps)
-nstvout                 = 500000                            ; Full-resolution velocity output interval (timesteps)
-nstfout                 = 500000                            ; Full-resolution force output interval (timesteps)
-nstxtcout               = 500000                            ; Reduced-resolution trajectory output interval (timesteps)
+nstxout                 = 7500                              ; Full-resolution trajectory output interval (timesteps)
+nstvout                 = 7500                              ; Full-resolution velocity output interval (timesteps)
+nstfout                 = 7500                              ; Full-resolution force output interval (timesteps)
+nstxtcout               = 750                               ; Reduced-resolution trajectory output interval (timesteps)
 xtc-precision           = 10000                             ; Reduced-resolution trajectory output precision
 

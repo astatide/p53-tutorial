@@ -13,8 +13,8 @@ cd $WEST_CURRENT_SEG_DATA_REF
 
 if [[ "$USE_LOCAL_SCRATCH" == "1" ]] ; then
     # make scratch directory
-    $WORKDIR=$SCRATCHROOT/$WEST_CURRENT_SEG_DATA_REF
-    $SWROOT/bin/mkdir -p $WORKDIR || exit 1
+    WORKDIR=$SCRATCHROOT/$WEST_CURRENT_SEG_DATA_REF
+    $SWROOT/bin/mkdir -pv $WORKDIR || exit 1
     cd $WORKDIR || exit 1
     STAGEIN="$SWROOT/bin/cp -avL"
 else
@@ -55,6 +55,8 @@ case $WEST_CURRENT_SEG_INITPOINT_TYPE in
         $STAGEIN $NDX_LOC .
         $STAGEIN $REF_LOC .
         $STAGEIN $MDP_LOC .
+        $STAGEIN $ITP_LOC .
+        $STAGEIN $ION_LOC . || exit 1
         $GROMPP -f $MDP -c parent.gro -e parent.edr -p $TOP \
           -t parent.trr -o seg.tpr -po md_out.mdp
     ;;
@@ -77,6 +79,8 @@ case $WEST_CURRENT_SEG_INITPOINT_TYPE in
         $STAGEIN $NDX_LOC .
         $STAGEIN $REF_LOC .
         $STAGEIN $MDP_LOC .
+        $STAGEIN $ITP_LOC .
+        $STAGEIN $ION_LOC . || exit 1
         $GROMPP -f $MDP -c parent.gro -e parent.edr -p $TOP \
           -t parent.trr -o seg.tpr -po md_out.mdp
     ;;

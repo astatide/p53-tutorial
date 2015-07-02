@@ -14,8 +14,10 @@ case $HOSTNAME in
         module purge
         module load sys
         module load queue
-        module load gromacs/4.6.5-intel-2013-rhel
+        module load gromacs/4.6.3-intel13-sse41
         module load westpa/1.0-gcc-4.8.2
+        #module load westpa
+        #module load anaconda
 
         # Should we use the local scratch?
         export USE_LOCAL_SCRATCH=1
@@ -46,6 +48,8 @@ export TRJCONV=$(which trjconv)
 export GMINDIST=$(which g_mindist)
 export GRAMA=$(which g_rama)
 export TOP_LOC=$WEST_SIM_ROOT/gromacs_config/p53.top
+export ITP_LOC=$WEST_SIM_ROOT/gromacs_config/conf.itp
+export ION_LOC=$WEST_SIM_ROOT/gromacs_config/ions.itp
 export NDX_LOC=$WEST_SIM_ROOT/gromacs_config/p53.ndx
 export REF_LOC=$WEST_SIM_ROOT/gromacs_config/coil.gro
 export MDP_LOC=$WEST_SIM_ROOT/gromacs_config/md.mdp
