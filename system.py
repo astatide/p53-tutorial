@@ -74,7 +74,7 @@ def pcoord_loader_color_tracker(fieldname, coord_file, segment, single_point=Fal
     # It's difficult to ascertain what is truly 'folded' and 'unfolded' for these without a prior
     # free energy profile; thankfully, we just need some rough estimates.  In the worst case scenario,
     # we devolve to the original Huber and Kim sampling scheme.
-    color_bins = [(0.0,0.20),(11.60,float('inf'))]
+    color_bins = [(0.0,2.0),(15.0,float('inf'))]
     unknown_state = 2
     system = westpa.rc.get_system_driver()
 
