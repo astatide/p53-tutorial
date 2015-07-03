@@ -39,10 +39,6 @@ function cleanup() {
 # Regardless of the reason we exit, run the function cleanup.
 trap cleanup EXIT
 
-# In both instances, we sub in a new random variable
-# due to some slight inconsistencies in how the random
-# variables are sometimes used.
-
 case $WEST_CURRENT_SEG_INITPOINT_TYPE in
     SEG_INITPOINT_CONTINUES)
         # A continuation from a prior segment
@@ -50,8 +46,6 @@ case $WEST_CURRENT_SEG_INITPOINT_TYPE in
         # We'll use the checkpoint files, rather than energy files,
         # in this case.
         #   parent segment
-        sed "s/RAND/$WEST_RAND16/g" \
-          $WEST_SIM_ROOT/gromacs_config/md.mdp > md.mdp
         $STAGEIN $WEST_PARENT_DATA_REF/seg.gro ./parent.gro
         $STAGEIN $WEST_PARENT_DATA_REF/seg.cpt ./parent.cpt
         $STAGEIN $WEST_PARENT_DATA_REF/imaged_ref.gro ./parent_imaged.gro
@@ -70,8 +64,6 @@ case $WEST_CURRENT_SEG_INITPOINT_TYPE in
         # We are also copying in the basis state as the imaged ref.
         # $WEST_PARENT_DATA_REF contains the reference to the
         #   appropriate basis or initial state
-        sed "s/RAND/$WEST_RAND16/g" \
-          $WEST_SIM_ROOT/gromacs_config/md.mdp > md.mdp
         $STAGEIN $WEST_PARENT_DATA_REF.edr ./parent.edr
         $STAGEIN $WEST_PARENT_DATA_REF.gro ./parent.gro
         $STAGEIN $WEST_PARENT_DATA_REF.trr ./parent.trr
@@ -127,11 +119,6 @@ if [ ${G_DIST} ]; then
       | $G_RMS -s $REF -f nojump.xtc -n $NDX -xvg none || exit 1
     cat rmsd.xvg | awk '{print $2*10;}' > $WEST_PCOORD_RETURN
 
-    # Return the true pcoord.
-    #paste dist_out.xvg rmsd_out.xvg > $WEST_PCOORD_RETURN || exit 
-
-    # Remove the imaged trajectories we created that we don't need, anymore, as these are not likely to
-    # be caught in the cleanup step (we don't want to copy them off scratch), as well as the reference file.
 fi
 
 # Output coordinates.  While we can return coordinates, this is expensive (data size) for a system of this size
