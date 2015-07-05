@@ -3,7 +3,7 @@
 #PBS -S /bin/bash
 #PBS -j oe
 #PBS -l walltime=24:00:00
-#PBS -l nodes=1:ppn=25
+#PBS -l nodes=1:ppn=32
 #PBS -q dist_amd
 #PBS -m ae
 #PBS -A westpa2015

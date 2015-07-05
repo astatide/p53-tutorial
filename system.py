@@ -27,9 +27,9 @@ class System(WESTSystem):
         # not dissimilar to the maximum for the distance; something around 57 A, as
         # that would take into account the peptide flipping completely around.
         # However, we must bin much finer.
-        self.rmsd_binbounds         = [0.0+0.2*i for i in xrange(0,19)] + \
-                                      [4.0+0.4*i for i in xrange(0,19)] + \
-                                      [12.0+11.0*i for i in xrange(0,4)] + [float('inf')]
+        self.rmsd_binbounds         = [0.0+0.1*i for i in xrange(0,19)] + \
+                                      [2.0+0.2*i for i in xrange(0,19)] + \
+                                      [6.0+11.0*i for i in xrange(0,5)] + [float('inf')]
         # As this is the end to end length of the P53 peptide, the bins should cover
         # everything from the coil to the fully extended peptide, or 3.8 A * 15 or so.
         # (Including caps probably overestimates length, but that's alright)
@@ -49,7 +49,7 @@ class System(WESTSystem):
 
         self.bin_target_counts      = numpy.empty((self.bin_mapper.nbins,),
                                         numpy.int)
-        self.bin_target_counts[...] = 4
+        self.bin_target_counts[...] = 8
 
 def pcoord_loader_color_tracker(fieldname, coord_file, segment, single_point=False):
     """
@@ -209,3 +209,11 @@ def log_loader(fieldname, log_filename, segment, single_point=False):
 
     # Save to hdf5
     segment.data[fieldname] = dataset
+
+
+def pull_rmsd(n_iter,iter_group):
+    pcoord = iter_group['pcoord']
+    data = pcoord[:,:,0]
+    print(data[:,:,numpy.newaxis].shape)
+    print(pcoord.shape)
+    return data[:,:,numpy.newaxis] 

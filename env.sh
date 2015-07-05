@@ -16,7 +16,9 @@ case $HOSTNAME in
         module load queue
         #module load gromacs/4.6.3-intel13-sse41
         module load gromacs/4.6.5-gcc-4.8.2-rhel
-        module load westpa/1.0-gcc-4.8.2
+        #module load westpa/1.0-gcc-4.8.2
+        module load anaconda
+        module load westpa/current
 
         # Should we use the local scratch?
         export USE_LOCAL_SCRATCH=1

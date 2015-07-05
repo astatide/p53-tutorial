@@ -1,7 +1,9 @@
-#!/bin/bash
-
-cd $WEST_SIM_ROOT
-source env.sh
+#!/bin/bash -l
 
 set -x
-$WEST_ROOT/bin/w_run "$@"
+
+cd $PBS_O_WORKDIR
+(source env.sh
+cd $WEST_SIM_ROOT
+
+$WEST_ROOT/bin/w_run "$@" ) &> west-$PBS_NODENUM-node.log
