@@ -27,9 +27,9 @@ class System(WESTSystem):
         # not dissimilar to the maximum for the distance; something around 57 A, as
         # that would take into account the peptide flipping completely around.
         # However, we must bin much finer.
-        self.rmsd_binbounds         = [0.0+0.1*i for i in xrange(0,19)] + \
-                                      [2.0+0.2*i for i in xrange(0,19)] + \
-                                      [6.0+11.0*i for i in xrange(0,5)] + [float('inf')]
+        self.rmsd_binbounds         = [0.0+0.1*i for i in xrange(0,39)] + \
+                                      [4.0+0.2*i for i in xrange(0,19)] + \
+                                      [8.0+11.0*i for i in xrange(0,5)] + [float('inf')]
         # As this is the end to end length of the P53 peptide, the bins should cover
         # everything from the coil to the fully extended peptide, or 3.8 A * 15 or so.
         # (Including caps probably overestimates length, but that's alright)
