@@ -214,6 +214,4 @@ def log_loader(fieldname, log_filename, segment, single_point=False):
 def pull_rmsd(n_iter,iter_group):
     pcoord = iter_group['pcoord']
     data = pcoord[:,:,0]
-    print(data[:,:,numpy.newaxis].shape)
-    print(pcoord.shape)
     return data[:,:,numpy.newaxis] 
