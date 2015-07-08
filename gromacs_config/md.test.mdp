@@ -7,7 +7,6 @@ dt                      = 0.002                             ; Timestep (ps)
 nsteps                  = 100                               ; Simulation duration (timesteps)
 nstcomm                 = 5                                 ; Center of mass motion removal interval (timesteps)
 comm-grps               = system                            ; Remove center of mass motion of system
-define                  = -DPOSRES
 ;###################################################### ENSEMBLE #######################################################
 Pcoupl                  = berendsen                         ; Berendsen barostat
 tcoupl                  = v-rescale
