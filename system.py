@@ -12,7 +12,7 @@ log.debug('loading module %r' % __name__)
 
 class System(WESTSystem):
     """
-    System for P53 folding and unfolding.
+    System for P53 conformational sampling
     """
 
     def initialize(self):
@@ -28,8 +28,8 @@ class System(WESTSystem):
         # that would take into account the peptide flipping completely around.
         # However, we must bin much finer.
         self.rmsd_binbounds         = [0.0+0.1*i for i in xrange(0,39)] + \
-                                      [4.0+0.2*i for i in xrange(0,19)] + \
-                                      [8.0+11.0*i for i in xrange(0,5)] + [float('inf')]
+                                      [4.0+0.2*i for i in xrange(0,54)] + \
+                                      [15.0+11.0*i for i in xrange(0,5)] + [float('inf')]
         # As this is the end to end length of the P53 peptide, the bins should cover
         # everything from the coil to the fully extended peptide, or 3.8 A * 15 or so.
         # (Including caps probably overestimates length, but that's alright)
@@ -214,4 +214,6 @@ def log_loader(fieldname, log_filename, segment, single_point=False):
 def pull_rmsd(n_iter,iter_group):
     pcoord = iter_group['pcoord']
     data = pcoord[:,:,0]
+    print(data[:,:,numpy.newaxis].shape)
+    print(pcoord.shape)
     return data[:,:,numpy.newaxis] 
