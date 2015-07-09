@@ -107,13 +107,13 @@ if [ ${G_DIST} ]; then
     echo -e $COMMAND \
       | $TRJCONV    -f nojump.xtc  -s seg.tpr            -n $NDX -o imaged_ref.gro  -b -1 || exit 1
 
-    # Update the command, then calculate the first dimension of the progress coordinate: end to end distance.
+    # Update the command, then calculate the auxiliary coordinate.
     COMMAND="18 \n 19 \n"
     echo -e $COMMAND \
       | $G_DIST -f seg.xtc -s seg.tpr -o dist.xvg -xvg none -n $NDX || exit 1
     cat dist.xvg | awk '{print $2*10;}' > $WEST_END_TO_END_DIST_RETURN
 
-    # Update the command again, then run g_rms to calculate to second the dimension: the heavy atom rmsd of the protein aligned on itself.
+    # Update the command again, then run g_rms to calculate to progress coordinate: the heavy atom rmsd of the protein aligned on itself.
     COMMAND="2 \n 2 \n"
     echo -e $COMMAND \
       | $G_RMS -s $REF -f nojump.xtc -n $NDX -xvg none || exit 1

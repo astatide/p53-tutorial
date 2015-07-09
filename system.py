@@ -23,18 +23,13 @@ class System(WESTSystem):
         self.pcoord_len   = 11
         self.pcoord_dtype = numpy.float32
         # As the RMSD coordinate is taken relative to the coil, aligned on the coil,
-        # it will remain sensitive to coil changes.  It's best to assume the maximum is
+        # it will remain sensitive to coil changes.  It's not awful to assume the maximum is
         # not dissimilar to the maximum for the distance; something around 57 A, as
         # that would take into account the peptide flipping completely around.
         # However, we must bin much finer.
         self.rmsd_binbounds         = [0.0+0.1*i for i in xrange(0,39)] + \
                                       [4.0+0.2*i for i in xrange(0,54)] + \
                                       [15.0+11.0*i for i in xrange(0,5)] + [float('inf')]
-        # As this is the end to end length of the P53 peptide, the bins should cover
-        # everything from the coil to the fully extended peptide, or 3.8 A * 15 or so.
-        # (Including caps probably overestimates length, but that's alright)
-        # Total of 57 angstroms.
-        #self.dist_binbounds         = [0.0+10.0*i for i in xrange(0,6)] + [float('inf')]
 
         # It's best not to place these at the integer boundaries, due to 
         # oddities with the way numpy/h5py stores the values inside the west.h5 file.
